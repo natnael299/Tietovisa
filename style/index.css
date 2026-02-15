@@ -1,0 +1,162 @@
+Main {
+  display: flex;
+  margin: 50px 0 0 0;
+  flex-direction: column;
+  width: 100%;
+  gap: 40px;
+  padding: 0 0 100px 0;
+}
+
+.upper {
+  background-color: #00a0e4b2;
+  padding: 40px 10px;
+  display: flex;
+  justify-content: center;
+  gap: 130px;
+}
+
+.upper img,
+.lower img {
+  width: 430px;
+  height: 240px;
+}
+
+.upper div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 35px;
+}
+
+.upper div p {
+  max-width: 400px;
+  line-height: 1.60rem;
+  font-size: 1.18rem;
+  display: flex;
+  text-align: center;
+}
+
+.upper div a {
+  text-decoration: none;
+  border: 1px solid black;
+  width: 300px;
+  padding: 9px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  background-color: black;
+  color: #fff;
+}
+
+.upper div a:hover {
+  color: #252525;
+  background-color: transparent;
+}
+
+.lower {
+  padding: 40px 10px;
+  display: flex;
+  justify-content: center;
+  gap: 130px;
+}
+
+.lower div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.lower div ol {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.lower div a {
+  border: 1px solid black;
+  color: #252525;
+  width: 250px;
+  text-align: center;
+  padding: 8px 0;
+  text-decoration: none;
+}
+
+@media (max-width: 480px) {
+  .desktop {
+    display: none;
+  }
+
+  Header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    height: 50px;
+    width: 100%;
+    z-index: 1000;
+    background-color: black;
+    color: #fff;
+  }
+
+  #auth:popover-open {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+    top: 52px;
+    padding: 5px 0;
+  }
+
+  #auth a {
+    text-decoration: none;
+    width: 100%;
+    color: black;
+  }
+
+  Header button {
+    color: #252525;
+    padding: 0 3px;
+  }
+
+  .lower div ol {
+    font-size: 0.9rem;
+    max-width: 320px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 745px) {
+  .mobile {
+    display: none;
+  }
+
+  img {
+    display: none;
+  }
+
+  .lower div ol {
+    font-size: 1.1rem;
+    max-width: 390px;
+  }
+}
+
+@media (min-width: 746px) and (max-width: 900px) {
+  .mobile {
+    display: none;
+  }
+
+  .upper {
+    gap: 70px;
+  }
+
+  .lower {
+    gap: 40px;
+  }
+}
+
+@media (min-width: 747px) {
+  .mobile {
+    display: none;
+  }
+}

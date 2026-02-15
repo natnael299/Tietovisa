@@ -1,0 +1,71 @@
+   @import url(https://fonts.googleapis.com/css?family=Raleway:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+   @import url(https://fonts.googleapis.com/css?family=Roboto:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+
+   * {
+     padding: 0;
+     margin: 0;
+     box-sizing: border-box;
+   }
+
+
+   body {
+     font-family: "Roboto", Arial, Helvetica;
+     transition: all 0.35s ease-in-out;
+     background-color: #2525250c;
+     display: flex;
+     flex-direction: column;
+     min-height: 100vh;
+   }
+
+   h1,
+   h2 {
+     font-family: "Raleway";
+   }
+
+   Header {
+     display: flex;
+     justify-content: space-between;
+     padding: 10px;
+     height: 50px;
+     width: 100%;
+     z-index: 1000;
+   }
+
+   Header .links {
+     display: flex;
+     gap: 10px;
+   }
+
+   .links a {
+     text-decoration: none;
+     border: 1px solid black;
+     padding: 5px 10px;
+     font-size: 0.9rem;
+     border-radius: 4px;
+   }
+
+   .links a:hover {
+     background-color: blue;
+     color: #fff;
+   }
+
+   Footer {
+     display: flex;
+     justify-content: space-between;
+     padding: 10px;
+     height: 40px;
+     position: fixed;
+     bottom: 0;
+     width: 100%;
+     z-index: 1000;
+     background-color: black;
+     color: #fff;
+   }
+
+   Footer a {
+     color: #fff;
+   }
+
+   Footer a:hover {
+     color: blue;
+   }
