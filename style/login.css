@@ -1,0 +1,42 @@
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  margin: 70px auto 20px auto;
+  overflow-y: auto;
+  border: 1px solid black;
+  border-top: 4px solid black;
+  border-radius: 20px;
+  padding: 20px 20px 10px 20px;
+  gap: 15px;
+}
+
+form input[type="text"],
+form input[type="password"] {
+  border: 1px solid black;
+  width: 300px;
+  padding-left: 10px;
+  height: 35px;
+  border-radius: 10px;
+}
+
+form input[type="submit"] {
+  padding: 8px 40px;
+  border-radius: 10px;
+  background-color: #252525;
+  color: #fff;
+  margin: 17px 0 30px 0;
+}
+
+@media (max-width: 700px) {
+  .desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 701px) {
+  .mobile {
+    display: none;
+  }
+}

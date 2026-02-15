@@ -1,0 +1,90 @@
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  margin: 20px auto;
+  overflow-y: auto;
+  border: 1px solid black;
+  border-top: 4px solid black;
+  border-radius: 20px;
+  padding: 10px;
+  gap: 12px;
+}
+
+form input[type="text"],
+form input[type="password"] {
+  border: 1px solid black;
+  width: 300px;
+  padding-left: 10px;
+  height: 33px;
+  border-radius: 10px;
+}
+
+form input[type="submit"] {
+  padding: 8px 40px;
+  border-radius: 10px;
+  background-color: #252525;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.agreementGrid {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.agreementGrid .clause {
+  width: 350px;
+  font-size: 0.81rem;
+}
+
+
+@media (max-width: 450px) {
+  form {
+    margin: 80px auto 0 auto;
+  }
+
+  .agreementGrid {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .agreementGrid .clause {
+    width: 300px;
+    font-size: 0.77rem;
+  }
+
+  .desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 451px) and (max-width: 700px) {
+  form {
+    margin: 20px auto 0 auto;
+  }
+
+  .agreementGrid {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .agreementGrid .clause {
+    width: 300px;
+    font-size: 0.77rem;
+  }
+
+  .desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 701px) {
+  .mobile {
+    display: none;
+  }
+}
