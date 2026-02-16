@@ -23,58 +23,29 @@ function get_results($conn, $length)
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="./style/general.css">
+  <link rel="stylesheet" href="./style/leaderboard.css">
 
-  <style>
-    Main {
-      display: flex;
-      flex-direction: column;
-      align-items: start;
-      width: fit-content;
-      margin: 10px auto;
-      padding-bottom: 80px;
-      gap: 20px;
-    }
-
-    Main h2 {
-      margin-bottom: 20px;
-    }
-
-    ol {
-      display: flex;
-      width: 100%;
-      flex-direction: column;
-      align-items: start;
-      gap: 8px;
-    }
-
-    ol li {
-      display: list-item;
-      list-style-position: inside;
-    }
-
-    li.current {
-      font-weight: bold;
-    }
-
-    li p {
-      display: inline;
-      margin-right: 20px;
-    }
-
-    .name {
-      display: inline-block;
-      width: 90px;
-    }
-  </style>
 </head>
 
 <body>
   <Header>
     <h2>Tietovisa</h2>
-    <div class="links">
-      <a href="../index.php">Etusivu</a>
+    <div class="links desktop">
+      <a href="./index.php">Etusivu</a>
+      <a href="./logout.php">logout</a>
     </div>
+    <!-- button for opening links to auth files in mobile-->
+    <button class="mobile" popovertarget="auth">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- auth links for mobile-->
+    <nav class="mobile" popover id="auth">
+      <a href="./auth/index.php">Etusivu</a>
+      <a href="./auth/logout.php">Kirjausu ulos</a>
+    </nav>
   </Header>
 
   <Main>
@@ -92,7 +63,7 @@ function get_results($conn, $length)
                 <?= htmlspecialchars($r["username"])  ?>
               </div>
 
-              <p>
+              <p class="length">
                 <?= htmlspecialchars($r["point"])  ?>/<?= htmlspecialchars($r["length"])  ?>
               </p>
               <p>Lyhyt</p>
@@ -100,7 +71,7 @@ function get_results($conn, $length)
           <?php endforeach; ?>
         </ol>
       <?php else: ?>
-        <p>Tuloksia ei löydetty</p>
+        <p>Lyhyt kysymyksien Tuloksia ei löydetty</p>
       <?php endif; ?>
     </div>
 
@@ -113,9 +84,9 @@ function get_results($conn, $length)
             <li class="<?php if ($r['id'] == $_SESSION['game_id']) {
                           echo 'current';
                         } ?>">
-              <p class="name">
+              <div class="name">
                 <?= htmlspecialchars($r["username"])  ?>
-              </p>
+              </div>
 
               <p>
                 <?= htmlspecialchars($r["point"])  ?>/<?= htmlspecialchars($r["length"])  ?>
@@ -125,7 +96,7 @@ function get_results($conn, $length)
           <?php endforeach; ?>
         </ol>
       <?php else: ?>
-        <p>Tuloksia ei löydetty</p>
+        <p> Keskipitkä kysymyksien Tuloksia ei löydetty</p>
       <?php endif; ?>
     </div>
 
@@ -138,9 +109,9 @@ function get_results($conn, $length)
             <li class="<?php if ($r['id'] == $_SESSION['game_id']) {
                           echo 'current';
                         } ?>">
-              <p class="name">
+              <div class="name">
                 <?= htmlspecialchars($r["username"])  ?>
-              </p>
+              </div>
 
               <p>
                 <?= htmlspecialchars($r["point"])  ?>/<?= htmlspecialchars($r["length"])  ?>
@@ -150,10 +121,11 @@ function get_results($conn, $length)
           <?php endforeach; ?>
         </ol>
       <?php else: ?>
-        <p>Tuloksia ei löydetty</p>
+        <p> Pitkä kysymyksien Tuloksia ei löydetty</p>
       <?php endif; ?>
     </div>
 
+    <a href="./start.php">Pelaa Uudestaan</a>
   </Main>
 
   <footer>

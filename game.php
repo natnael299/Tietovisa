@@ -68,9 +68,20 @@ if (isset($_POST["answer"])) {
 <body>
   <Header>
     <h2>Tietovisa</h2>
-    <div class="links">
-      <a href="../index.php">Etusivu</a>
+    <div class="links desktop">
+      <a href="./index.php">Etusivu</a>
+      <a href="./logout.php">logout</a>
     </div>
+    <!-- button for opening links to auth files in mobile-->
+    <button class="mobile" popovertarget="auth">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- auth links for mobile-->
+    <nav class="mobile" popover id="auth">
+      <a href="./auth/index.php">Etusivu</a>
+      <a href="./auth/logout.php">Kirjausu ulos</a>
+    </nav>
   </Header>
 
   <?php if ($_SESSION["questions"]): ?>

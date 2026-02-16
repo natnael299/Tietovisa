@@ -28,8 +28,19 @@ if (isset($_POST["play"])) {
   <Header>
     <h2>Tietovisa</h2>
     <div class="links">
-      <a href="../index.php">Etusivu</a>
+      <a href="./index.php">Etusivu</a>
+      <a href="./logout.php">logout</a>
     </div>
+    <!-- button for opening links to auth files in mobile-->
+    <button class="mobile" popovertarget="auth">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- auth links for mobile-->
+    <nav class="mobile" popover id="auth">
+      <a href="./auth/index.php">Etusivu</a>
+      <a href="./auth/logout.php">Kirjausu ulos</a>
+    </nav>
   </Header>
 
   <form class="body" method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>">

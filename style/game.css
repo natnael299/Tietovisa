@@ -78,7 +78,11 @@ footer a:hover {
   color: blue;
 }
 
-@media (max-width: 450px) {
+@media (max-width: 480px) {
+  .desktop {
+    display: none;
+  }
+
   h3 {
     font-size: 1.3rem;
   }
@@ -107,5 +111,44 @@ footer a:hover {
     background-color: black;
     color: #fff;
     opacity: 1;
+  }
+
+  Header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    height: 50px;
+    width: 100%;
+    z-index: 1000;
+    background-color: black;
+    color: #fff;
+  }
+
+  #auth:popover-open {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+    top: 52px;
+    padding: 5px 0;
+  }
+
+  #auth a {
+    text-decoration: none;
+    width: 100%;
+    color: black;
+  }
+
+  Header button {
+
+    color: #252525;
+    padding: 0 3px;
+  }
+}
+
+@media (min-width: 481px) {
+  .mobile {
+    display: none;
   }
 }

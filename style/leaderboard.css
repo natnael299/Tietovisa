@@ -1,0 +1,104 @@
+  Main {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: fit-content;
+    margin: 10px auto;
+    padding-bottom: 80px;
+    gap: 20px;
+  }
+
+  Main h2 {
+    margin: 0 20px 0 40px;
+  }
+
+  Main a {
+    display: flex;
+    margin: 20px 0 0 20px;
+    text-decoration: none;
+    border: 1px solid black;
+    color: black;
+    padding: 6px 35px;
+    text-align: center;
+    align-items: center;
+  }
+
+  ol {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: start;
+    gap: 8px;
+  }
+
+  ol li {
+    display: list-item;
+    list-style-position: inside;
+  }
+
+  li.current {
+    font-weight: bold;
+  }
+
+  li p {
+    display: inline;
+    margin-right: 20px;
+  }
+
+  p.length {
+    margin-right: 29px;
+  }
+
+  .name {
+    display: inline-block;
+    width: 90px;
+  }
+
+  @media (max-width: 480px) {
+    .desktop {
+      display: none;
+    }
+
+    Main {
+      margin: 100px auto;
+    }
+
+    Header {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      height: 50px;
+      width: 100%;
+      z-index: 1000;
+      background-color: black;
+      color: #fff;
+    }
+
+    #auth:popover-open {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      text-align: center;
+      top: 52px;
+      padding: 5px 0;
+    }
+
+    #auth a {
+      text-decoration: none;
+      width: 100%;
+      color: black;
+    }
+
+    Header button {
+
+      color: #252525;
+      padding: 0 3px;
+    }
+  }
+
+  @media (min-width: 481px) {
+    .mobile {
+      display: none;
+    }
+  }

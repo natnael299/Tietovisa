@@ -26,6 +26,7 @@ if (isset($_POST["Save"])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="./style/general.css">
   <link rel="stylesheet" href="./style/result.css">
 </head>
@@ -34,8 +35,19 @@ if (isset($_POST["Save"])) {
   <Header>
     <h2>Tietovisa</h2>
     <div class="links">
-      <a href="../index.php">Etusivu</a>
+      <a href="./index.php">Etusivu</a>
+      <a href="./logout.php">logout</a>
     </div>
+    <!-- button for opening links to auth files in mobile-->
+    <button class="mobile" popovertarget="auth">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- auth links for mobile-->
+    <nav class="mobile" popover id="auth">
+      <a href="./auth/index.php">Etusivu</a>
+      <a href="./auth/logout.php">Kirjausu ulos</a>
+    </nav>
   </Header>
 
   <?php if ($_SESSION["user_id"]): ?>
