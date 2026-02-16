@@ -1,0 +1,67 @@
+  Main {
+    margin-top: 70px;
+  }
+
+
+  .top {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    padding: 0 15px;
+  }
+
+  .top button {
+    padding: 5px 10px;
+  }
+
+  #form:popover-open {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    position: absolute;
+    margin: auto;
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  #form button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.7rem;
+    background-color: red;
+    color: #fff;
+    border: none;
+    padding: 2px;
+  }
+
+  #form input[type="text"] {
+    width: 250px;
+    height: 30px;
+    margin-top: 20px;
+  }
+
+  #form input[type="submit"] {
+    margin-top: 20px;
+    width: 150px;
+    background-color: black;
+    color: #fff;
+    padding: 6px;
+  }
+
+  #form .message {
+    color: green;
+  }
+
+  .categories {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 40px auto 0 auto;
+    gap: 15px;
+  }
+
+  .categories a {
+    margin: 0 auto;
+  }
