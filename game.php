@@ -1,11 +1,11 @@
 <?php
 require_once("./config.php");
-$ids = isset($_GET["ids"]) ? explode('.', $_GET["ids"]) : "";
-$teacherId = (int) $ids[0] ?? 0;
-$categoryId = (int) $ids[1] ?? 0;
-$length = (int) $ids[2] ?? 0;
-$_SESSION["questions"] = [];
-if (count($_SESSION["questions"]) < 1) {
+$teacherId =  $_SESSION["teacher"];
+$categoryId =  $_SESSION["subject"];
+$length =  $_SESSION["length"];
+
+if (empty($_SESSION["questions"])) {
+  $_SESSION["questions"] = [];
   $stmt = $conn->prepare("SELECT * FROM questions WHERE category_id=? AND teacher_id=?  LIMIT ?");
   $stmt->bind_param("iii", $teacherId, $categoryId, $length);
   $stmt->execute();
@@ -38,17 +38,10 @@ if (isset($_POST["answer"])) {
 
     //check if all question were answered
     if ($_SESSION["index"] == $length - 1) {
-      //insert the info to the db
-      $name = get_name($conn, $_SESSION["point"]);
-      $point = $_SESSION["point"];
-      $percentage = ($point / $length) * 100;
-      $stmt = $conn->prepare("INSERT INTO (username, percentage, point, length) VALUES(?, ?, ?, ?)");
-      $stmt->bind_param("siii", $name, $percentage, $point, $length);
-      $stmt->execute();
-
       //clear all session variables and redirect
       $_SESSION["questions"] = [];
       $_SESSION["final_p"] =  $_SESSION["point"];
+      $_SESSION["length"] = $length;
       $_SESSION["point"] = 0;
       $_SESSION["index"] = 0;
       header("Location: ./result.php");

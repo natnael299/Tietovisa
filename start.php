@@ -3,10 +3,10 @@ require_once("./config.php");
 
 if (isset($_POST["play"])) {
   if (!empty($_POST["teacher"]) && !empty($_POST["subject"]) && !empty($_POST["length"])) {
-    $tId = $_POST["teacher"] ?? 0; //teachers id
-    $cId = $_POST["subject"] ?? 0; // categories id
-    $l = $_POST["length"] ?? 0; // length
-    header("Location: ./game.php?ids=" . $tId . '.' . $cId . '.' . $l);
+    $_SESSION["teacher"] = $_POST["teacher"] ?? 0; //teachers id
+    $_SESSION["subject"]  = $_POST["subject"] ?? 0; // categories id
+    $_SESSION["length"] = $_POST["length"] ?? 0; // length
+    header("Location: ./game.php");
     exit();
   }
 }
