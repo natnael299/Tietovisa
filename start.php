@@ -1,5 +1,15 @@
 <?php
 require_once("./config.php");
+
+if (isset($_POST["play"])) {
+  if (!empty($_POST["teacher"]) && !empty($_POST["subject"]) && !empty($_POST["length"])) {
+    $tId = $_POST["teacher"] ?? 0; //teachers id
+    $cId = $_POST["subject"] ?? 0; // categories id
+    $l = $_POST["length"] ?? 0; // length
+    header("Location: ./game.php?ids=" . $tId . '.' . $cId . '.' . $l);
+    exit();
+  }
+}
 ?>
 
 <!DOCTYPE html>
@@ -63,10 +73,10 @@ require_once("./config.php");
     <input type="submit" name="play" value="Aloita Peli">
   </form>
 
-  <Footer>
+  <footer>
     <p><strong>Tekijä: </strong> Natnael Beyene</p>
     <p><strong><a href="https://github.com/natnael299">Github</a></strong> </p>
-  </Footer>
+  </footer>
 
   <script>
     const teacher = document.getElementById("teacher");
@@ -83,7 +93,7 @@ require_once("./config.php");
             return res.json();
           })
           .then((data) => {
-            subject.innerHTML = `<option>Valitse opettaja ensin</option>`;
+            subject.innerHTML = `<option>--- Valitse aihealue ---</option>`;
             //populate the select grid for subject
             data.forEach((row) => {
               const optionEle = document.createElement("option");

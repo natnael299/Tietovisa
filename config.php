@@ -13,3 +13,16 @@ if ($_SERVER["HTTP_HOST"] == "localhost") {
 }
 
 $conn = new mysqli($host, $user, $password, $database);
+
+//get user name by id
+function get_name($conn, $id)
+{
+  $name = "";
+  $stmt = $conn->prepare("SELECT username from users WHERE id=?");
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $r = $result->fetch_assoc();
+  $name = $r["username"];
+  return $name;
+}

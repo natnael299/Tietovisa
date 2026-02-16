@@ -80,10 +80,10 @@ require_once("./config.php");
     </div>
   </Main>
 
-  <Footer>
+  <footer>
     <p><strong>Tekijä: </strong> Natnael Beyene</p>
     <p><strong><a href="https://github.com/natnael299">Github</a></strong> </p>
-  </Footer>
+  </footer>
 </body>
 
 </html>

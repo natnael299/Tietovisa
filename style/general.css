@@ -49,23 +49,24 @@
      color: #fff;
    }
 
-   Footer {
+   footer {
      display: flex;
      justify-content: space-between;
      padding: 10px;
      height: 40px;
      position: fixed;
      bottom: 0;
+     left: 0;
      width: 100%;
      z-index: 1000;
      background-color: black;
      color: #fff;
    }
 
-   Footer a {
+   footer a {
      color: #fff;
    }
 
-   Footer a:hover {
+   footer a:hover {
      color: blue;
    }

@@ -96,10 +96,10 @@ try {
     <?php endif; ?>
   </form>
 
-  <Footer>
+  <footer>
     <p><strong>Tekijä: </strong> Natnael Beyene</p>
     <p><strong><a href="https://github.com/natnael299">Github</a></strong> </p>
-  </Footer>
+  </footer>
 
 </body>
 
