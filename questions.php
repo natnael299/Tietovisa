@@ -2,6 +2,7 @@
 require_once("./config.php");
 
 $subjectId = (int) ($_GET["id"] ?? 0);
+$_SESSION["page_id"] = $subjectId; // keeps track of the subject id
 //get info based on the subject id 
 function get_info($conn, $id)
 {
@@ -17,10 +18,12 @@ function get_info($conn, $id)
 }
 
 $message = "kysymys on registeröidetty";
+$message = "kysymys on registeröidetty";
 $subjectName = get_info($conn, $subjectId)[0];
 $teacher_id =  get_info($conn, $subjectId)[1];
 
 //insert new question to the database
+$new_q_message = "";
 if (isset($_POST["create"])) {
   if (!empty($_POST["kysymys"]) && !empty($_POST["option_a"]) && !empty($_POST["option_b"]) && !empty($_POST["option_c"]) && !empty($_POST["option_d"]) && !empty($_POST["answer"])) {
     $kysymys = $_POST["kysymys"];
@@ -33,11 +36,12 @@ if (isset($_POST["create"])) {
     $stmt = $conn->prepare("INSERT INTO questions (category_id, teacher_id, question, option_a, option_b, option_c, option_d, correct_option) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("iissssss", $subjectId, $teacher_id, $kysymys, $option_a, $option_b, $option_c, $option_d, $answer);
     if ($stmt->execute()) {
-      $message = "kysymys on registeröidetty";
+      $new_q_message = "kysymys on registeröidetty";
     };
   } else {
-    $message = "Täyttä kaikki kohdat";
+    $new_q_message = "Täyttä kaikki kohdat";
   }
+  header("Location: questions.php?id=" . $_SESSION["page_id"]);
 }
 
 //fetch questions by subject id
@@ -57,7 +61,39 @@ if (isset($_POST["delete"])) {
   $stmt->bind_param("i", $id);
   $stmt->execute();
 }
+
+//fetch results based on the category
+$results = [];
+$limit = 5;
+$pageNo = (int)($_GET["page"] ?? 1);
+$offset = ($pageNo - 1) * $limit;
+$fetch_results = $conn->prepare("SELECT * FROM result WHERE category_id=? ORDER BY percentage DESC  LIMIT ? OFFSET ?");
+$fetch_results->bind_param("iii", $subjectId, $limit, $offset);
+$fetch_results->execute();
+$rows = $fetch_results->get_result();
+while ($r = $rows->fetch_assoc()) {
+  $results[] = $r;
+};
+
+//prepare links for results table
+function get_count($conn, $sql, $num)
+{
+  $results = [];
+  $stmt = $conn->prepare($sql);
+  $id = $num;
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  $rows = $stmt->get_result();
+  while ($r = $rows->fetch_assoc()) {
+    $results[] = $r;
+  };
+  return count($results);
+}
+$sql = "SELECT * FROM result WHERE category_id=?";
+$total_result_row = get_count($conn, $sql, 1);
+$totalLinks = ceil($total_result_row / $limit);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,17 +106,62 @@ if (isset($_POST["delete"])) {
   <style>
     Main {
       padding-bottom: 60px;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 40px 70px 10px;
     }
 
-    #form:popover-open {
+    .right {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 15px;
-      position: absolute;
+      margin-top: 60px;
+    }
+
+    table {
+      margin: 10px 0;
+      padding: 0;
+      border-collapse: collapse;
+    }
+
+    table tr th,
+    table tr td {
+      border: 1px solid black;
+      padding: 6px 9px;
+      text-align: center;
+    }
+
+    .pages {
+      margin: 15px 0 0 0;
+      margin-top: 15px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .pages a {
+      text-decoration: none;
+      border: 1px solid black;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+    }
+
+    .pages a:hover,
+    .addQ:hover {
+      box-shadow: 0px 0px 2px blue;
+    }
+
+    dialog {
       margin: auto;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    #form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
     }
 
     #form textarea#kysymys {
@@ -94,7 +175,7 @@ if (isset($_POST["delete"])) {
     }
 
     #form button,
-    #edit button {
+    .edit .closeEditF {
       position: absolute;
       top: 5px;
       right: 5px;
@@ -133,27 +214,24 @@ if (isset($_POST["delete"])) {
       padding: 6px;
     }
 
-    #edit {
+    .edit {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px 17px;
-      gap: 10px;
-      position: absolute;
-      margin: auto;
-      border-radius: 15px;
+      gap: 8px;
+      padding: 10px;
     }
 
-    #edit input#kysymys,
-    #edit input#option_a,
-    #edit input#option_b,
-    #edit input#option_c,
-    #edit input#option_d {
-      width: 300px;
+    .edit input#kysymys,
+    .edit input#option_a,
+    .edit input#option_b,
+    .edit input#option_c,
+    .edit input#option_d {
+      width: 350px;
       padding: 10px 0 10px 10px;
     }
 
-    #edit .inputContainer {
+    .edit .inputContainer {
       width: 100%;
     }
 
@@ -161,12 +239,12 @@ if (isset($_POST["delete"])) {
       margin-right: 5px;
     }
 
-    #edit input#answer {
+    .edit input#answer {
       width: 50px;
       padding: 10px 0 10px 10px;
     }
 
-    #edit input[type="submit"] {
+    .edit input[type="submit"] {
       width: 150px;
       background-color: green;
       color: #fff;
@@ -176,36 +254,30 @@ if (isset($_POST["delete"])) {
       border: none;
     }
 
-    #deleteForm:popover-open {
+    .deleteForm {
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 25px 10px;
       gap: 30px;
-      position: absolute;
-      margin: auto;
       border-radius: 15px;
     }
 
-    #deleteForm button {
+    .deleteForm button {
       width: 120px;
       padding: 8px 0;
       border: none;
       border-radius: 3px;
     }
 
-    #deleteForm .delete {
+    .deleteForm .delete {
       background-color: red;
       color: #fff;
     }
 
-    #deleteForm .cancel {
+    .deleteForm .closeDeleteF {
       background-color: green;
       color: #fff;
-    }
-
-    .left {
-      margin-left: 10px;
     }
 
     .subject {
@@ -251,6 +323,21 @@ if (isset($_POST["delete"])) {
       margin-right: 4px;
       border: none;
     }
+
+    @media (max-width: 750px) {
+      Main {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+        gap: 30px;
+      }
+
+      .right {
+        width: fit-content;
+        align-items: center;
+        margin-top: 0;
+      }
+    }
   </style>
 </head>
 
@@ -268,58 +355,62 @@ if (isset($_POST["delete"])) {
       <a class="returnLink" href="./admin.php">Takaisin</a>
       <div class="top">
         <h3>Kysymykset</h3>
-        <button popovertarget="form">
+
+        <!-- opens the form for adding a new question -->
+        <button class="addQ_btn">
           Lisää uusi kysymys
         </button>
 
         <!-- add a new question -->
-        <form popover method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" id="form">
-          <button type="button" popovertarget="form" popovertargetaction="hide">
-            <i class="fas fa-x"></i>
-          </button>
-          <h3>Lisää uusi kysymys</h3>
+        <dialog class="addNewQ">
+          <form method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) . '?' . $_SERVER['QUERY_STRING'] ?>" id="form">
+            <button type="button" class="closeQ">
+              <i class="fas fa-x"></i>
+            </button>
+            <h3>Lisää uusi kysymys</h3>
 
-          <!-- quesiton box -->
-          <div class="textContainer">
-            <label for="kysymys">Kysymys:</label>
-            <textarea name="kysymys" id="kysymys"></textarea>
-          </div>
+            <!-- quesiton box -->
+            <div class="textContainer">
+              <label for="kysymys">Kysymys:</label>
+              <textarea name="kysymys" id="kysymys" required></textarea>
+            </div>
 
-          <!-- option a of the quesiton -->
-          <div class="textContainer">
-            <label for="option_a">Valinta A:</label>
-            <textarea id="option_a" name="option_a"></textarea>
-          </div>
+            <!-- option a of the quesiton -->
+            <div class="textContainer">
+              <label for="option_a">Valinta A:</label>
+              <textarea id="option_a" name="option_a" required></textarea>
+            </div>
 
-          <!-- option b of the quesiton -->
-          <div class="textContainer">
-            <label for="option_b">Valinta B:</label>
-            <textarea id="option_b" name="option_b"></textarea>
-          </div>
+            <!-- option b of the quesiton -->
+            <div class="textContainer">
+              <label for="option_b">Valinta B:</label>
+              <textarea id="option_b" name="option_b" required></textarea>
+            </div>
 
-          <!-- option c of the quesiton -->
-          <div class="textContainer">
-            <label for="option_c">Valinta C:</label>
-            <textarea id="option_c" name="option_c"></textarea>
-          </div>
+            <!-- option c of the quesiton -->
+            <div class="textContainer">
+              <label for="option_c">Valinta C:</label>
+              <textarea id="option_c" name="option_c" required></textarea>
+            </div>
 
-          <!-- option d of the quesiton -->
-          <div class="textContainer">
-            <label for="option_d">Valinta D:</label>
-            <textarea for="option_d" type="text" name="vastaus">
+            <!-- option d of the quesiton -->
+            <div class="textContainer">
+              <label for="option_d">Valinta D:</label>
+              <textarea for="option_d" type="text" name="vastaus" required>
           </textarea>
-          </div>
+            </div>
 
-          <!-- The answer for the quesiton -->
-          <div class="inputContainer">
-            <label for="answer">Vastaus:</label>
-            <input id="answer" type="text" name="answer" placeholder="esim: A">
-          </div>
-          <input type="submit" name="create" value="Lisää">
-          <?php if (!empty($message)): ?>
-            <p class="message"><?= htmlspecialchars($message) ?></p>
-          <?php endif; ?>
-        </form>
+            <!-- The answer for the quesiton -->
+            <div class="inputContainer">
+              <label for="answer">Vastaus:</label>
+              <input id="answer" type="text" name="answer" placeholder="esim: A" required>
+            </div>
+            <input type="submit" name="create" value="Lisää">
+            <?php if (!empty($new_q_message)): ?>
+              <p class="addMessage"><?= htmlspecialchars($new_q_message) ?></p>
+            <?php endif; ?>
+          </form>
+        </dialog>
       </div>
 
       <div class="questions">
@@ -327,85 +418,95 @@ if (isset($_POST["delete"])) {
           <div class="question">
             <div class="upper">
               <p>
-                <button popovertarget="edit">
+                <!-- button to edit a question -->
+                <button class="openEditF" data-edit-id="<?= $q["id"]  ?>">
                   <i class="fas fa-pencil"></i>
                 </button>
 
-                <!-- edit form -->
-              <form popover method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" id="edit">
-                <button type="button" popovertarget="edit" popovertargetaction="hide">
-                  <i class="fas fa-x"></i>
+                <!-- edit dialog -->
+                <dialog class="edit<?= $q["id"] ?>">
+                  <form class="edit" method="post" action="#">
+
+                    <!-- button to close the popover -->
+
+                    <button class="closeEditF" data-edit-id="<?= $q["id"] ?>">
+                      <i class="fas fa-x"></i>
+                    </button>
+                    <h3>Muokaa kysymystä</h3>
+
+                    <!-- quesiton box -->
+                    <div class="textContainer">
+                      <label for="kysymys">Kysymys:</label>
+                      <input required type="text" name="kysymys" id="kysymys" value="<?= htmlspecialchars($q["question"]) ?>" />
+                    </div>
+
+                    <!-- option a of the quesiton -->
+                    <div class="textContainer">
+                      <label for="option_a">Valinta A:</label>
+                      <input required type="text" id="option_a" name="option_a" value="<?= htmlspecialchars($q["option_a"]) ?>" />
+                    </div>
+
+                    <!-- option b of the quesiton -->
+                    <div class="textContainer">
+                      <label for="option_b">Valinta B:</label>
+                      <input required type="text" id="option_b" name="option_b" value="<?= htmlspecialchars($q["option_b"]) ?>" />
+                    </div>
+
+                    <!-- option c of the quesiton -->
+                    <div class="textContainer">
+                      <label for="option_c">Valinta C:</label>
+                      <input required type="text" id="option_c" name="option_c" value="<?= htmlspecialchars($q["option_c"]) ?>" />
+                    </div>
+
+                    <!-- option d of the quesiton -->
+                    <div class="textContainer">
+                      <label for="option_d">Valinta D:</label>
+                      <input required type="text" id="option_d" name="option_d" value="<?= htmlspecialchars($q["option_d"]) ?>" />
+                    </div>
+
+                    <!-- The answer for the quesiton -->
+                    <div class="inputContainer">
+                      <label for="answer">Vastaus:</label>
+                      <input required id="answer" type="text" name="answer" value="<?= htmlspecialchars($q["correct_option"]) ?>">
+                    </div>
+
+                    <input type="submit" name="edit" value="Muoka">
+                    <?php if (!empty($message)): ?>
+                      <p class="message"><?= htmlspecialchars($message) ?></p>
+                    <?php endif; ?>
+                  </form>
+                </dialog>
+
+                <!-- button to delete a question from the database -->
+                <button class="openDeleteF" data-delete-id="<?= $q["id"] ?>">
+                  <i class="fas fa-trash"></i>
                 </button>
-                <h3>Muokaa kysymystä</h3>
 
-                <!-- quesiton box -->
-                <div class="textContainer">
-                  <label for="kysymys">Kysymys:</label>
-                  <input type="text" name="kysymys" id="kysymys" value="<?= htmlspecialchars($q["question"]) ?>" />
-                </div>
+                <!-- Delete form -->
+                <dialog class="delete<?= $q["id"] ?>">
+                  <form class="deleteForm" action="#" method="post">
+                    <p>
+                      <strong>
+                        Oletko varma, että haluat poista valitsemasi kysymystä?
+                      </strong>
+                    </p>
+                    <div class="buttons">
+                      <button name="delete" class="delete" type="submit" value="<?= htmlspecialchars($q['id']) ?>">
+                        Poista Kysymys
+                      </button>
 
-                <!-- option a of the quesiton -->
-                <div class="textContainer">
-                  <label for="option_a">Valinta A:</label>
-                  <input type="text" id="option_a" name="option_a" value="<?= htmlspecialchars($q["option_a"]) ?>" />
-                </div>
+                      <button class="closeDeleteF" data-delete-id="<?= $q["id"] ?>">
+                        Peruta processi
+                      </button>
+                    </div>
+                  </form>
+                </dialog>
 
-                <!-- option b of the quesiton -->
-                <div class="textContainer">
-                  <label for="option_b">Valinta B:</label>
-                  <input type="text" id="option_b" name="option_b" value="<?= htmlspecialchars($q["option_b"]) ?>" />
-                </div>
-
-                <!-- option c of the quesiton -->
-                <div class="textContainer">
-                  <label for="option_c">Valinta C:</label>
-                  <input type="text" id="option_c" name="option_c" value="<?= htmlspecialchars($q["option_c"]) ?>" />
-                </div>
-
-                <!-- option d of the quesiton -->
-                <div class="textContainer">
-                  <label for="option_d">Valinta D:</label>
-                  <input type="text" id="option_d" name="option_d" value="<?= htmlspecialchars($q["option_d"]) ?>" />
-                </div>
-
-                <!-- The answer for the quesiton -->
-                <div class="inputContainer">
-                  <label for="answer">Vastaus:</label>
-                  <input id="answer" type="text" name="answer" value="<?= htmlspecialchars($q["correct_option"]) ?>">
-                </div>
-
-                <input type="submit" name="edit" value="Muoka">
-                <?php if (!empty($message)): ?>
-                  <p class="message"><?= htmlspecialchars($message) ?></p>
-                <?php endif; ?>
-              </form>
-
-              <button popovertarget='deleteForm'>
-                <i class="fas fa-trash"></i>
-              </button>
-              <!-- Delete form -->
-              <form action="#" method="post" id='deleteForm' popover>
-                <p>
+                <span>
                   <strong>
-                    Oletko varma, että haluat poista valitsemasi kysymystä?
+                    <?= htmlspecialchars($q["question"]) ?>
                   </strong>
-                </p>
-                <div class="buttons">
-                  <button name="delete" class="delete" type="submit" value="<?= htmlspecialchars($q['id']) ?>">
-                    Poista Kysymys
-                  </button>
-
-                  <button type="button" class="cancel" popovertargetaction="hide" popovertarget="deleteForm">
-                    Peruta processi
-                  </button>
-                </div>
-              </form>
-
-              <span>
-                <strong>
-                  <?= htmlspecialchars($q["question"]) ?>
-                </strong>
-              </span>
+                </span>
               </p>
             </div>
             <p class="options">
@@ -426,15 +527,112 @@ if (isset($_POST["delete"])) {
         <?php endforeach; ?>
       </div>
     </div>
-    <div class="right">
 
-    </div>
+    <?php if (count($results) > 0):  ?>
+      <div class="right">
+        <h2>Tulokset</h2>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Nimi</th>
+              <th>Pisteet</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php for ($i = 0; $i < count($results); $i++): ?>
+              <tr>
+                <td><?= $i + 1 + $offset ?></td>
+                <td><?= htmlspecialchars($results[$i]["username"]) ?></td>
+                <td>
+                  <?= htmlspecialchars($results[$i]["point"]) . '/' .
+                    htmlspecialchars($results[$i]["length"]) ?>
+                </td>
+                <td>
+                  <?= htmlspecialchars($results[$i]["percentage"]) . '%' ?>
+                </td>
+              </tr>
+            <?php endfor; ?>
+          </tbody>
+        </table>
+        <?php if ($totalLinks > 0):  ?>
+          <div class="pages">
+            <?php for ($i = 1; $i <= $totalLinks; $i++):  ?>
+              <a class="link" href="questions.php?id=<?= $subjectId ?>&page=<?= $i ?>">
+                <?= $i  ?>
+              </a>
+            <?php endfor;  ?>
+          </div>
+        <?php endif;  ?>
+      </div>
+    <?php else:  ?>
+      <p>
+        <strong>Ei tuloksia vielä!!</strong>
+      </p>
+    <?php endif;  ?>
   </Main>
 
   <footer>
     <p><strong>Tekijä: </strong> Natnael Beyene</p>
     <p><strong><a href="https://github.com/natnael299">Github</a></strong> </p>
   </footer>
+
+  <script>
+    const addQDialog = document.querySelector(".addNewQ");
+    const openQuestionF = document.querySelector(".addQ_btn");
+    const closeQuestionF = document.querySelector(".closeQ");
+
+    //opens the dialog element for adding new question
+    openQuestionF.addEventListener("click", () => {
+      addQDialog.showModal();
+    })
+
+    //closes the dialog element for adding new question
+    closeQuestionF.addEventListener("click", () => {
+      addQDialog.close();
+    })
+
+    //open the edit dialog form
+    const openEditForms = document.querySelectorAll(".openEditF");
+    openEditForms.forEach((form) => {
+      form.addEventListener("click", () => {
+        const id = form.dataset.editId;
+        const editDialog = document.querySelector(`.edit${id}`);
+        editDialog.showModal();
+      });
+    });
+
+    //closes the edit dialog form
+    const closeEditForms = document.querySelectorAll(".closeEditF");
+    closeEditForms.forEach((form) => {
+      form.addEventListener("click", () => {
+        const id = form.dataset.editId;
+        const editDialog = document.querySelector(`.edit${id}`);
+        editDialog.close();
+      });
+    });
+
+    //opens the delete dialog form
+    const openDeleteForms = document.querySelectorAll(".openDeleteF");
+    openDeleteForms.forEach((form) => {
+      form.addEventListener("click", () => {
+        const id = form.dataset.deleteId;
+        const editDialog = document.querySelector(`.delete${id}`);
+        editDialog.showModal();
+      });
+    });
+
+    //closes the delete dialog form
+    const closeDeleteForms = document.querySelectorAll(".closeDeleteF");
+    closeDeleteForms.forEach((form) => {
+      form.addEventListener("click", () => {
+        const id = form.dataset.deleteId;
+        const editDialog = document.querySelector(`.delete${id}`);
+        editDialog.close();
+      });
+    });
+  </script>
 </body>
 
 </html>
