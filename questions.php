@@ -1,10 +1,16 @@
 <?php
 require_once("./config.php");
-//validate user plue role
-$role = get_role($conn, $_SESSION["user_id"]);
-if (!isset($_SESSION["user_id"]) || $role !== "admin") {
+//validate admin plue role
+if (isset($_SESSION["user_id"])) {
+  $role = get_role($conn, $_SESSION["user_id"]);
+  if ($role != "admin") {
+    header("Location: ./auth/login.php");
+    exit;
+  }
+} else {
   header("Location: ./auth/login.php");
-};
+  exit;
+}
 
 $subjectId = (int) ($_GET["id"] ?? 0);
 $_SESSION["page_id"] = $subjectId; // keeps track of the subject id
