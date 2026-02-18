@@ -8,7 +8,7 @@ try {
     $password = isset($_POST["password"]) ? $_POST["password"] : "";
     $password2 = isset($_POST["password2"]) ? $_POST["password2"] : "";
     $role = "user";
-    if (isset($_POST["agree"]) && !empty($username) && !empty($email)  && !empty($num) && !empty($password) && !empty($password2)) {
+    if (isset($_POST["agree"]) && !empty($username) && !empty($email)  && !empty($password) && !empty($password2)) {
       if ($password !== $password2) {
         throw new Exception("Salasanat eivät täsmää");
       }
@@ -25,7 +25,10 @@ try {
     }
   }
 } catch (mysqli_sql_exception $e) {
-  $error = "joku virhe on tapahtunut";
+  $error = "joku virhe on tapahtunut, Yritää uudestaan";
+} catch (Throwable $e) {
+  $error = "joku virhe on tapahtunut, Yritää uudestaan";
+  error_log($e->getMessage());
 }
 ?>
 
