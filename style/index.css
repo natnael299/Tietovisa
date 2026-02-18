@@ -100,19 +100,37 @@ Main {
   }
 
   #auth:popover-open {
-    width: 100%;
+    width: min(220px, calc(100% - 20px));
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    text-align: center;
-    top: 52px;
-    padding: 5px 0;
+    gap: 8px;
+    top: 56px;
+    right: 10px;
+    left: auto;
+    margin: 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #25252533;
   }
 
   #auth a {
     text-decoration: none;
     width: 100%;
-    color: black;
+    color: #252525;
+    border: 1px solid #25252533;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: center;
+    background-color: #fff;
+  }
+
+  #auth a:hover {
+    background-color: #252525;
+    color: #fff;
+  }
+
+  #auth a[href*="logout"] {
+    border-color: #25252566;
   }
 
   Header button {

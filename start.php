@@ -31,7 +31,7 @@ if (isset($_POST["play"])) {
 <body>
   <Header>
     <h2>Tietovisa</h2>
-    <div class="links">
+    <div class="links desktop">
       <a href="./index.php">Etusivu</a>
       <a href="./logout.php">logout</a>
     </div>
@@ -42,7 +42,7 @@ if (isset($_POST["play"])) {
 
     <!-- auth links for mobile-->
     <nav class="mobile" popover id="auth">
-      <a href="./auth/index.php">Etusivu</a>
+      <a href="./index.php">Etusivu</a>
       <a href="./logout.php">Kirjausu ulos</a>
     </nav>
   </Header>
