@@ -9,11 +9,12 @@ $point = $_SESSION["final_p"];
 $length = $_SESSION["length"];
 $name = get_name($conn, $_SESSION["user_id"]);
 $message = "";
+$category_id =  $_SESSION["subject"] ?? 0;
 //save the game's data to the database
 if (isset($_POST["Save"])) {
   $percentage = ($point / $length) * 100;
-  $stmt = $conn->prepare("INSERT INTO result (user_id, percentage, point, length) VALUES(?, ?, ?, ?)");
-  $stmt->bind_param("siii", $_SESSION["user_id"], $percentage, $point, $length);
+  $stmt = $conn->prepare("INSERT INTO result (user_id, category_id, percentage, point, length) VALUES(?, ?, ?, ?)");
+  $stmt->bind_param("siii", $_SESSION["user_id"], $category_id, $percentage, $point, $length);
   if ($stmt->execute()) {
     $_SESSION["game_id"] = $stmt->insert_id;
     $message = "Tuloksesi on tallennettu!!";
