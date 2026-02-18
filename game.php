@@ -1,13 +1,13 @@
 <?php
 require_once("./config.php");
-$teacherId =  $_SESSION["teacher"];
-$categoryId =  $_SESSION["subject"];
-$length =  $_SESSION["length"];
+$teacherId =  $_SESSION["teacher"] ?? 0;
+$categoryId =  $_SESSION["subject"] ?? 0;
+$length =  $_SESSION["length"] ?? 0;
 
 if (empty($_SESSION["questions"])) {
   $_SESSION["questions"] = [];
   $stmt = $conn->prepare("SELECT * FROM questions WHERE category_id=? AND teacher_id=?  LIMIT ?");
-  $stmt->bind_param("iii", $teacherId, $categoryId, $length);
+  $stmt->bind_param("iii", $categoryId, $teacherId, $length);
   $stmt->execute();
   $result = $stmt->get_result();
   while ($r = $result->fetch_assoc()) {
@@ -24,9 +24,11 @@ if (!isset($_SESSION["point"])) {
   $_SESSION["point"] = 0;
 }
 $current_index =  $_SESSION["index"];
-$currentR = $_SESSION["questions"][$current_index]; //current question row
-$currentA = $currentR["correct_option"]; // current questions's answer
-$points = 0;
+if (!empty($_SESSION["questions"])) {
+  $currentR = $_SESSION["questions"][$current_index]; //current question row
+  $currentA = $currentR["correct_option"]; // current questions's answer
+}
+$points = $_SESSION["point"];
 
 if (isset($_POST["answer"])) {
   if (!empty($_POST["option"])) {
@@ -128,13 +130,14 @@ if (isset($_POST["answer"])) {
           </p>
         </div>
         <input type="submit" name="answer" value="Vastaa">
-      <?php endif; ?>
+      </div>
     </form>
+  <?php endif; ?>
 
-    <footer>
-      <p><strong>Tekijä: </strong> Natnael Beyene</p>
-      <p><strong><a href="https://github.com/natnael299">Github</a></strong> </p>
-    </footer>
+  <footer>
+    <p><strong>Tekijä: </strong> Natnael Beyene</p>
+    <p><strong><a href="https://github.com/natnael299">Github</a></strong> </p>
+  </footer>
 </body>
 
 </html>
