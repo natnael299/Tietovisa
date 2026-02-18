@@ -46,7 +46,7 @@ require_once("./config.php");
           Pelaa nyt
         </p>
 
-        <a href="./game.php">Pelaa Nyt</a>
+        <a href="./start.php">Pelaa Nyt</a>
       </div>
       <img class="desktop" src="./intructions_folder\assets\images\pexels-leeloothefirst-5428830.jpg" alt="">
     </div>
@@ -75,7 +75,7 @@ require_once("./config.php");
         </ol>
         <p>
         </p>
-        <a href="./game.php">Kokeile tatitojasi nyt</a>
+        <a href="./start.php">Kokeile tatitojasi nyt</a>
       </div>
     </div>
   </Main>

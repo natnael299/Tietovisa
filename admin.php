@@ -1,9 +1,11 @@
 <?php
 require_once("./config.php");
-//validate user
-if (!isset($_SESSION["user_id"])) {
+//validate user plue role
+$role = get_role($conn, $_SESSION["user_id"]);
+if (!isset($_SESSION["user_id"]) || $role !== "admin") {
   header("Location: ./auth/login.php");
-}
+};
+
 $categories = [];
 $_SESSION["user_id"] = 1;
 $teacherId = $_SESSION["user_id"];
