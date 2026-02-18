@@ -1,9 +1,9 @@
 <?php
 require_once("./config.php");
-
 $subjectId = (int) ($_GET["id"] ?? 0);
 $_SESSION["page_id"] = $subjectId; // keeps track of the subject id
 //get info based on the subject id 
+$name = get_name($conn, $_SESSION["user_id"]); //fetch user name based on id
 function get_info($conn, $id)
 {
   $info = [];
@@ -319,7 +319,7 @@ $totalLinks = ceil($total_result_row / $limit);
             <?php for ($i = 0; $i < count($results); $i++): ?>
               <tr>
                 <td><?= $i + 1 + $offset ?></td>
-                <td><?= htmlspecialchars($results[$i]["username"]) ?></td>
+                <td><?= htmlspecialchars(get_name($conn, $results[$i]["user_id"])) ?></td>
                 <td>
                   <?= htmlspecialchars($results[$i]["point"]) . '/' .
                     htmlspecialchars($results[$i]["length"]) ?>

@@ -60,7 +60,7 @@ function get_results($conn, $length)
                           echo 'current';
                         } ?>">
               <div class="name">
-                <?= htmlspecialchars($r["username"])  ?>
+                <?= htmlspecialchars(get_name($conn, $r["user_id"]))  ?>
               </div>
 
               <p class="length">
@@ -85,7 +85,7 @@ function get_results($conn, $length)
                           echo 'current';
                         } ?>">
               <div class="name">
-                <?= htmlspecialchars($r["username"])  ?>
+                <?= htmlspecialchars(get_name($conn, $r["user_id"]))  ?>
               </div>
 
               <p>
@@ -110,7 +110,7 @@ function get_results($conn, $length)
                           echo 'current';
                         } ?>">
               <div class="name">
-                <?= htmlspecialchars($r["username"])  ?>
+                <?= htmlspecialchars(get_name($conn, $r["user_id"]))  ?>
               </div>
 
               <p>

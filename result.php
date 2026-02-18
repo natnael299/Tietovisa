@@ -2,14 +2,13 @@
 require_once("./config.php");
 $point = $_SESSION["final_p"];
 $length = $_SESSION["length"];
-$name = get_name($conn, $_SESSION["user_id"]); //fetch user name based on id
-
+$name = get_name($conn, $_SESSION["user_id"]);
 $message = "";
 //save the game's data to the database
 if (isset($_POST["Save"])) {
   $percentage = ($point / $length) * 100;
-  $stmt = $conn->prepare("INSERT INTO result (username, percentage, point, length) VALUES(?, ?, ?, ?)");
-  $stmt->bind_param("siii", $name, $percentage, $point, $length);
+  $stmt = $conn->prepare("INSERT INTO result (user_id, percentage, point, length) VALUES(?, ?, ?, ?)");
+  $stmt->bind_param("siii", $_SESSION["user_id"], $percentage, $point, $length);
   if ($stmt->execute()) {
     $_SESSION["game_id"] = $stmt->insert_id;
     $message = "Tuloksesi on tallennettu!!";
