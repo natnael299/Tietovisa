@@ -2,7 +2,7 @@
 require_once("./config.php");
 //validate user
 if (!isset($_SESSION["user_id"])) {
-  header("Location: ../auth/login.php");
+  header("Location: ./auth/login.php");
 }
 
 $subjectId = (int) ($_GET["id"] ?? 0);
