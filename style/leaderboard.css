@@ -51,7 +51,7 @@
 
   .name {
     display: inline-block;
-    width: 90px;
+    width: 140px;
   }
 
   @media (max-width: 480px) {
