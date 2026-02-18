@@ -78,7 +78,7 @@ try {
     <div class="agreementGrid">
       <input type="checkbox" name="agree" value="yes">
       <p class="clause">
-        Hyväksyn, että antamani tiedot tallenetaan järjestelmän ja että tietojani käytetään peliin.
+        Hyväksyn, että antamani tiedot tallenetaan järjestelmään ja että tietojani käytetään peliin.
       </p>
     </div>
     <input type="submit" name="submit" value="Registeröidä">

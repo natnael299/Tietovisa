@@ -16,7 +16,7 @@ try {
           if (password_verify($password, $r["password"])) {
             $_SESSION["user_id"] = $r["id"];
             if ($r["role"] == "user") {
-              header("Location: ../start.php?id=");
+              header("Location: ../start.php");
               exit();
             } else {
               header("Location: ../admin.php");
