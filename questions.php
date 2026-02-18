@@ -17,13 +17,10 @@ function get_info($conn, $id)
   return $info;
 }
 
-$message = "kysymys on registeröidetty";
-$message = "kysymys on registeröidetty";
 $subjectName = get_info($conn, $subjectId)[0];
 $teacher_id =  get_info($conn, $subjectId)[1];
 
 //insert new question to the database
-$new_q_message = "";
 if (isset($_POST["create"])) {
   if (!empty($_POST["kysymys"]) && !empty($_POST["option_a"]) && !empty($_POST["option_b"]) && !empty($_POST["option_c"]) && !empty($_POST["option_d"]) && !empty($_POST["answer"])) {
     $kysymys = $_POST["kysymys"];
@@ -36,12 +33,29 @@ if (isset($_POST["create"])) {
     $stmt = $conn->prepare("INSERT INTO questions (category_id, teacher_id, question, option_a, option_b, option_c, option_d, correct_option) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("iissssss", $subjectId, $teacher_id, $kysymys, $option_a, $option_b, $option_c, $option_d, $answer);
     if ($stmt->execute()) {
-      $new_q_message = "kysymys on registeröidetty";
+      header("Location: questions.php?id=" . $subjectId);
+      exit;
     };
-  } else {
-    $new_q_message = "Täyttä kaikki kohdat";
   }
-  header("Location: questions.php?id=" . $_SESSION["page_id"]);
+}
+
+//edit a question
+if (isset($_POST["edit"])) {
+  if (!empty($_POST["kysymys"]) && !empty($_POST["option_a"]) && !empty($_POST["option_b"]) && !empty($_POST["option_c"]) && !empty($_POST["option_d"]) && !empty($_POST["answer"])) {
+    $questionId = (int) ($_POST["question_id"] ?? 0);
+    $kysymys = $_POST["kysymys"];
+    $option_a = $_POST["option_a"];
+    $option_b = $_POST["option_b"];
+    $option_c = $_POST["option_c"];
+    $option_d = $_POST["option_d"];
+    $answer = strtoupper($_POST["answer"]);
+    $stmt = $conn->prepare("UPDATE questions SET question=?, option_a=?, option_b=?, option_c=?, option_d=?, correct_option=? WHERE id=?");
+    $stmt->bind_param("ssssssi", $kysymys, $option_a, $option_b, $option_c, $option_d, $answer, $questionId);
+    if ($stmt->execute()) {
+      header("Location: questions.php?id=" . $subjectId);
+      exit;
+    };
+  }
 }
 
 //fetch questions by subject id
@@ -59,7 +73,10 @@ if (isset($_POST["delete"])) {
   $id = $_POST["delete"];
   $stmt = $conn->prepare("DELETE from questions WHERE id=?");
   $stmt->bind_param("i", $id);
-  $stmt->execute();
+  if ($stmt->execute()) {
+    header("Location: questions.php?id=" . $subjectId);
+    exit;
+  };
 }
 
 //fetch results based on the category
@@ -90,7 +107,7 @@ function get_count($conn, $sql, $num)
   return count($results);
 }
 $sql = "SELECT * FROM result WHERE category_id=?";
-$total_result_row = get_count($conn, $sql, 1);
+$total_result_row = get_count($conn, $sql, $subjectId);
 $totalLinks = ceil($total_result_row / $limit);
 ?>
 
@@ -103,242 +120,7 @@ $totalLinks = ceil($total_result_row / $limit);
   <title>Document</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="./style/general.css">
-  <style>
-    Main {
-      padding-bottom: 60px;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 40px 70px 10px;
-    }
-
-    .right {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 60px;
-    }
-
-    table {
-      margin: 10px 0;
-      padding: 0;
-      border-collapse: collapse;
-    }
-
-    table tr th,
-    table tr td {
-      border: 1px solid black;
-      padding: 6px 9px;
-      text-align: center;
-    }
-
-    .pages {
-      margin: 15px 0 0 0;
-      margin-top: 15px;
-      display: flex;
-      gap: 6px;
-    }
-
-    .pages a {
-      text-decoration: none;
-      border: 1px solid black;
-      padding: 5px 10px;
-      font-size: 0.8rem;
-    }
-
-    .pages a:hover,
-    .addQ:hover {
-      box-shadow: 0px 0px 2px blue;
-    }
-
-    dialog {
-      margin: auto;
-      padding: 1rem;
-      border-radius: 10px;
-    }
-
-    #form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 10px;
-    }
-
-    #form textarea#kysymys {
-      width: 300px;
-      height: 45px;
-    }
-
-    #form textarea {
-      width: 300px;
-      height: 37px;
-    }
-
-    #form button,
-    .edit .closeEditF {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      font-size: 0.7rem;
-      background-color: red;
-      color: #fff;
-      border: none;
-      padding: 2px;
-    }
-
-    #form .textContainer {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #form .inputContainer {
-      display: flex;
-      width: 100%;
-      justify-content: start;
-      align-items: center;
-      gap: 15px;
-    }
-
-    #form input[type="text"] {
-      width: 60px;
-      height: 30px;
-      padding-left: 3px;
-    }
-
-    #form input[type="submit"] {
-      margin-top: 10px;
-      width: 150px;
-      background-color: black;
-      color: #fff;
-      padding: 6px;
-    }
-
-    .edit {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 10px;
-    }
-
-    .edit input#kysymys,
-    .edit input#option_a,
-    .edit input#option_b,
-    .edit input#option_c,
-    .edit input#option_d {
-      width: 350px;
-      padding: 10px 0 10px 10px;
-    }
-
-    .edit .inputContainer {
-      width: 100%;
-    }
-
-    .inputContainer label {
-      margin-right: 5px;
-    }
-
-    .edit input#answer {
-      width: 50px;
-      padding: 10px 0 10px 10px;
-    }
-
-    .edit input[type="submit"] {
-      width: 150px;
-      background-color: green;
-      color: #fff;
-      padding: 7px 0;
-      border-radius: 3px;
-      margin-top: 10px;
-      border: none;
-    }
-
-    .deleteForm {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 25px 10px;
-      gap: 30px;
-      border-radius: 15px;
-    }
-
-    .deleteForm button {
-      width: 120px;
-      padding: 8px 0;
-      border: none;
-      border-radius: 3px;
-    }
-
-    .deleteForm .delete {
-      background-color: red;
-      color: #fff;
-    }
-
-    .deleteForm .closeDeleteF {
-      background-color: green;
-      color: #fff;
-    }
-
-    .subject {
-      margin: 10px 0;
-    }
-
-    .top {
-      display: flex;
-      align-items: center;
-      gap: 11rem;
-      margin-top: 15px;
-    }
-
-    .top button {
-      padding: 4px 10px;
-    }
-
-    .message {
-      color: green;
-    }
-
-    .questions {
-      font-size: 0.84rem;
-      margin-top: 15px;
-    }
-
-    .question {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-bottom: 12px;
-    }
-
-    .question .upper {
-      display: flex;
-      gap: 3px;
-      align-items: center;
-    }
-
-    .upper button {
-      background: transparent;
-      font-size: 0.7rem;
-      margin-right: 4px;
-      border: none;
-    }
-
-    @media (max-width: 750px) {
-      Main {
-        display: flex;
-        flex-direction: column;
-        margin-left: 10px;
-        gap: 30px;
-      }
-
-      .right {
-        width: fit-content;
-        align-items: center;
-        margin-top: 0;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="./style/questions.css">
 </head>
 
 <body>
@@ -396,7 +178,7 @@ $totalLinks = ceil($total_result_row / $limit);
             <!-- option d of the quesiton -->
             <div class="textContainer">
               <label for="option_d">Valinta D:</label>
-              <textarea for="option_d" type="text" name="vastaus" required>
+              <textarea for="option_d" type="text" name="option_d" required>
           </textarea>
             </div>
 
@@ -406,9 +188,6 @@ $totalLinks = ceil($total_result_row / $limit);
               <input id="answer" type="text" name="answer" placeholder="esim: A" required>
             </div>
             <input type="submit" name="create" value="Lisää">
-            <?php if (!empty($new_q_message)): ?>
-              <p class="addMessage"><?= htmlspecialchars($new_q_message) ?></p>
-            <?php endif; ?>
           </form>
         </dialog>
       </div>
@@ -425,10 +204,9 @@ $totalLinks = ceil($total_result_row / $limit);
 
                 <!-- edit dialog -->
                 <dialog class="edit<?= $q["id"] ?>">
-                  <form class="edit" method="post" action="#">
-
+                  <form class="edit" method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) . '?' . $_SERVER['QUERY_STRING'] ?>">
+                    <input type="hidden" name="question_id" value="<?= htmlspecialchars($q['id']) ?>">
                     <!-- button to close the popover -->
-
                     <button class="closeEditF" data-edit-id="<?= $q["id"] ?>">
                       <i class="fas fa-x"></i>
                     </button>
@@ -471,9 +249,6 @@ $totalLinks = ceil($total_result_row / $limit);
                     </div>
 
                     <input type="submit" name="edit" value="Muoka">
-                    <?php if (!empty($message)): ?>
-                      <p class="message"><?= htmlspecialchars($message) ?></p>
-                    <?php endif; ?>
                   </form>
                 </dialog>
 
@@ -556,7 +331,7 @@ $totalLinks = ceil($total_result_row / $limit);
             <?php endfor; ?>
           </tbody>
         </table>
-        <?php if ($totalLinks > 0):  ?>
+        <?php if ($totalLinks > 1):  ?>
           <div class="pages">
             <?php for ($i = 1; $i <= $totalLinks; $i++):  ?>
               <a class="link" href="questions.php?id=<?= $subjectId ?>&page=<?= $i ?>">
