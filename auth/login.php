@@ -1,8 +1,6 @@
 <?php
 require_once("../config.php");
 $error = "";
-
-$detail_page_id = isset($_GET["id"]) ? (int) $_GET["id"] : (isset($_POST["page_id"]) ? (int) $_POST["page_id"] : "");
 try {
   if (isset($_POST["submit"])) {
     $email = isset($_POST["email"]) ? $_POST["email"] : "";
@@ -18,13 +16,8 @@ try {
           if (password_verify($password, $r["password"])) {
             $_SESSION["user_id"] = $r["id"];
             if ($r["role"] == "user") {
-              if (!empty($detail_page_id)) {
-                header("Location: ../plans_detail.php?id=" . $detail_page_id);
-                exit();
-              } else {
-                header("Location: ../plans.php");
-                exit();
-              }
+              header("Location: ../start.php?id=");
+              exit();
             } else {
               header("Location: ../admin.php");
               exit();
@@ -84,10 +77,6 @@ try {
       <a href="reg.php">Registeröidä</a>
       <a href="login.php">Kirjaudu</a>
     </div>
-    <!-- Hidden input to store the page_id used for redirecting -->
-    <?php if (!empty($detail_page_id)): ?>
-      <input type="hidden" name="page_id" value="<?= htmlspecialchars($detail_page_id) ?>">
-    <?php endif; ?>
     <input type="text" name="email" placeholder="email">
     <input type="password" name="password" placeholder="password">
     <input type="submit" name="submit" value="Kirjaudu">

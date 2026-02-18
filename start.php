@@ -1,5 +1,9 @@
 <?php
 require_once("./config.php");
+//validate user
+if (!isset($_SESSION["user_id"])) {
+  header("Location: ../auth/login.php");
+}
 
 if (isset($_POST["play"])) {
   if (!empty($_POST["teacher"]) && !empty($_POST["subject"]) && !empty($_POST["length"])) {

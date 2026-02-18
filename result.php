@@ -1,5 +1,10 @@
 <?php
 require_once("./config.php");
+//validate user
+if (!isset($_SESSION["user_id"])) {
+  header("Location: ../auth/login.php");
+}
+
 $point = $_SESSION["final_p"];
 $length = $_SESSION["length"];
 $name = get_name($conn, $_SESSION["user_id"]);

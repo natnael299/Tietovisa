@@ -1,33 +1,24 @@
 <?php
 require_once("../config.php");
 $error = "";
-
-$detail_page_id = isset($_GET["id"]) ? (int) $_GET["id"] : (isset($_POST["detail_page_id"]) ? (int) $_POST["detail_page_id"] : "");
 try {
   if (isset($_POST["submit"])) {
     $username = isset($_POST["username"]) ? $_POST["username"] : "";
     $email = isset($_POST["email"]) ? $_POST["email"] : "";
-    $address = isset($_POST["address"]) ? $_POST["address"] : "";
-    $num = isset($_POST["num"]) ? $_POST["num"] : "";
     $password = isset($_POST["password"]) ? $_POST["password"] : "";
     $password2 = isset($_POST["password2"]) ? $_POST["password2"] : "";
     $role = "user";
-    if (isset($_POST["agree"]) && !empty($username) && !empty($email) && !empty($address) && !empty($num) && !empty($password) && !empty($password2)) {
+    if (isset($_POST["agree"]) && !empty($username) && !empty($email)  && !empty($num) && !empty($password) && !empty($password2)) {
       if ($password !== $password2) {
         throw new Exception("Salasanat eivät täsmää");
       }
       $hashed_p = password_hash($password, PASSWORD_DEFAULT);
-      $stmt = $conn->prepare("INSERT INTO users (username, email, password, phone_number, address, role) VALUES(?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("ssssss", $username, $email, $hashed_p, $num, $address, $role);
+      $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES(?, ?, ?, ?)");
+      $stmt->bind_param("ssss", $username, $email, $hashed_p, $role);
       if ($stmt->execute()) {
         $_SESSION["user_id"] = $stmt->insert_id;
-        if (!empty($detail_page_id)) {
-          header("Location: ../plans_detail.php?id=" . $detail_page_id);
-          exit();
-        } else {
-          header("Location: ../plans.php");
-          exit();
-        }
+        header("Location: ../start.php");
+        exit;
       };
     } else {
       $error = "Täytät lomake kokonaan";
@@ -80,14 +71,8 @@ try {
       <a href="reg.php">Registeröidä</a>
       <a href="login.php">Kirjaudu</a>
     </div>
-    <!-- Hidden input to store the page_id used for redirecting -->
-    <?php if (!empty($detail_page_id)): ?>
-      <input type="hidden" name="detail_page_id" value="<?= htmlspecialchars($detail_page_id) ?>">
-    <?php endif; ?>
     <input type="text" name="username" placeholder="username">
     <input type="text" name="email" placeholder="email">
-    <input type="text" name="address" placeholder="address">
-    <input type="text" name="num" placeholder="phone number">
     <input type="password" name="password" placeholder="password">
     <input type="password" name="password2" placeholder="conform password">
     <div class="agreementGrid">

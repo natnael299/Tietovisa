@@ -1,5 +1,10 @@
 <?php
 require_once("./config.php");
+//validate user
+if (!isset($_SESSION["user_id"])) {
+  header("Location: ../auth/login.php");
+}
+
 $subjectId = (int) ($_GET["id"] ?? 0);
 $_SESSION["page_id"] = $subjectId; // keeps track of the subject id
 //get info based on the subject id 

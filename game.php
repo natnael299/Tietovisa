@@ -1,5 +1,10 @@
 <?php
 require_once("./config.php");
+//validate user
+if (!isset($_SESSION["user_id"])) {
+  header("Location: ../auth/login.php");
+}
+
 $teacherId =  $_SESSION["teacher"] ?? 0;
 $categoryId =  $_SESSION["subject"] ?? 0;
 $length =  $_SESSION["length"] ?? 0;

@@ -1,5 +1,11 @@
 <?php
 require_once("./config.php");
+//validate user
+if (!isset($_SESSION["user_id"])) {
+  header("Location: ../auth/login.php");
+}
+
+
 $_SESSION["game_id"] = 3;
 //gets saved results by length
 function get_results($conn, $length)
