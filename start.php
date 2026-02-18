@@ -43,7 +43,7 @@ if (isset($_POST["play"])) {
     <!-- auth links for mobile-->
     <nav class="mobile" popover id="auth">
       <a href="./auth/index.php">Etusivu</a>
-      <a href="./auth/logout.php">Kirjausu ulos</a>
+      <a href="./logout.php">Kirjausu ulos</a>
     </nav>
   </Header>
 
