@@ -13,6 +13,7 @@ if (empty($_SESSION["questions"])) {
   while ($r = $result->fetch_assoc()) {
     $_SESSION["questions"][] = $r;
   }
+  shuffle($_SESSION["questions"]);
 }
 
 //avoid zeroing index & point while reloading the page
